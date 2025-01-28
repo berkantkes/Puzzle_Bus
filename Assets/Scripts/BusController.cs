@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class BusController : MonoBehaviour
 {
+    private ObjectPoolManager _objectPoolManager;
     private List<Bus> _busList = new List<Bus>();
     private int offset = -2;
     
@@ -16,9 +17,10 @@ public class BusController : MonoBehaviour
 
     private void CreateBus(LevelData levelData, ObjectPoolManager poolManager)
     {
+        _objectPoolManager = poolManager;
         for (int i = 0; i < levelData.buses.Count; i++)
         {
-            Bus bus = poolManager.GetFromPool<Bus>(ObjectType.Bus, new Vector3(-i * 4, 0, + 3),
+            Bus bus = _objectPoolManager.GetFromPool<Bus>(ObjectType.Bus, new Vector3(-i * 4, 0, + 3),
                 Quaternion.identity);
             bus.Initialize(this);
             bus.SetColorType(levelData.buses[i]);
@@ -57,12 +59,24 @@ public class BusController : MonoBehaviour
 
             if (_busList.Count == 0)
             {
-                Debug.Log("LEVEL COMPLETED!");
+                EventManager.Execute(GameEvents.OnLevelSuccessful);
+                Debug.Log(GameEvents.OnLevelSuccessful);
             }
             
         });
 
         busSequence.Play();
     }
-    
+    public void ClearBuses()
+    {
+        foreach (Bus bus in _busList)
+        {
+            if (bus != null)
+            {
+                _objectPoolManager.ReturnToPool(ObjectType.Bus, bus.gameObject);
+            }
+        }
+
+        _busList.Clear();
+    }
 }

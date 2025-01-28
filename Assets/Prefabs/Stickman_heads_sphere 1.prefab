@@ -551,6 +551,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 8023350350114360828}
+  _renderer: {fileID: 4227072484630063652}
+  _outlineMaterial: {fileID: 2100000, guid: 46e5c3e7ac0ec3f40a9a3cc703e4871b, type: 2}
 --- !u!1 &4852429657658323209
 GameObject:
   m_ObjectHideFlags: 0

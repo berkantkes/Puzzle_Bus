@@ -11,14 +11,17 @@ public class Levels : ScriptableObject
 [System.Serializable]
 public class LevelData
 {
-    [Header("Grid Boyutları")]
+    [Header("Grid ")]
     public int gridSizeX = 4;
     public int gridSizeY = 4;
 
-    [Header("Human Pozisyonları")]
+    [Header("Human Positions")]
     public List<Vector2Int> humanStartPositions = new List<Vector2Int>(); 
     
-    [Header("Otobüs Verileri")]
+    [Header("Bus")]
     public List<ColorType> buses = new List<ColorType>();
+    
+    [Header("Time")]
+    public float time = 1;
 }
 

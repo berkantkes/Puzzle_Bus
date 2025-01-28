@@ -15,6 +15,7 @@ public class MatchManager : MonoBehaviour
     
     public void MoveToBusStop(Human human, GridManager gridManager)
     {
+        Debug.Log("MoveToBusStop 1 ");
         Bus bus = _busController.GetBus();
         BusStop busStop = _busStopManager.GetAvailableBusStop();
         
@@ -26,9 +27,11 @@ public class MatchManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("MoveToBusStop 2 ");
             human.MoveToPosition(busStop.position);
-            //StartCoroutine(human.MoveToPosition(busStop.position));
+            _busStopManager.CheckLastAvailableBusStop(human);
             busStop.isOccupied = true;
+            //StartCoroutine(human.MoveToPosition(busStop.position));
         }
 
         //TODO FAIL LEVEL

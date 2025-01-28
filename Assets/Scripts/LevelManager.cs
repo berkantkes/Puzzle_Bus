@@ -10,19 +10,32 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private HumanManager _humanManager;
     [SerializeField] private GridManager _gridManager; 
     [SerializeField] private InputManager _inputManager;
+    [SerializeField] private TimerController _timerController;
     
-    public Levels levelsData; 
+    public Levels levelsData;
 
+    private GameManager _gameManager;
     private ObjectPoolManager _poolManager;
     private MatchManager _matchManager;
+    private UiManager _uiManager;
     private Pathfinding pathfinding; 
     private List<Human> humans = new List<Human>();
     private List<SingleGridController> gridCells = new List<SingleGridController>();
 
-    public void Initialize(ObjectPoolManager poolManager, MatchManager matchManager)
+    public void Initialize(GameManager gameManager, ObjectPoolManager poolManager, MatchManager matchManager, UiManager uiManager)
     {
+        _gameManager = gameManager;
         _poolManager = poolManager;
         _matchManager = matchManager;
+        _uiManager = uiManager;
+    }
+    
+    private void OnEnable()
+    {
+    }
+    
+    private void OnDisable()
+    {
     }
     
     public void LoadLevel(int levelIndex)
@@ -41,13 +54,12 @@ public class LevelManager : MonoBehaviour
         pathfinding = new Pathfinding(_gridManager);
         _busStopManager.Initialize(_poolManager);
         _busController.Initialize(levelData, _poolManager);
-        _humanManager.Initialize(_gridManager, _poolManager, pathfinding, _matchManager);
-        _matchManager.Initialize(_busController, _busStopManager);
-        _inputManager.Initialize(_humanManager);
-        foreach (Vector2Int startPosition in levelData.humanStartPositions)
-        {
-            _humanManager.SpawnHuman(startPosition);
-        }
+        _humanManager.Initialize(_gridManager, _poolManager, pathfinding, _matchManager, levelData);
+        _matchManager.Initialize(_busController, _busStopManager); //gamemanager init
+        _inputManager.Initialize(_gameManager, _humanManager); // gamemanager init
+        _timerController.Initialize(_gameManager, levelData.time, _uiManager); // gamemanager init
+        
+        
     }
 
     private void ClearCurrentLevel()
@@ -63,5 +75,11 @@ public class LevelManager : MonoBehaviour
             _poolManager.ReturnToPool(ObjectType.GridCell, cell.gameObject);
         }
         gridCells.Clear();
+        _gridManager.ClearGrid();
+        pathfinding = null;
+        _busStopManager.ClearBusStops();
+        _busController.ClearBuses();
+        _humanManager.ClearHumans();
+
     }
 }

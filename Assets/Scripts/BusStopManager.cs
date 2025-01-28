@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
+using UnityEngine;using System.Linq;
+
 
 public class BusStopManager : MonoBehaviour
 {
@@ -23,11 +25,6 @@ public class BusStopManager : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             Vector3 position = new Vector3(startX + (i * gap), 0, startZ);
-            // BusStop busStop = new BusStop(position);
-            // busStops.Add(busStop);
-            //
-            // // Otobüs prefab'ini yerleştir
-            // GameObject busStopObject = Instantiate(busStopPrefab, position, Quaternion.identity, busStopParent);
             
             BusStop busStop = _poolManager.GetFromPool<BusStop>(ObjectType.BusStop, position, Quaternion.identity);
             busStop.Initialize(position);
@@ -48,5 +45,32 @@ public class BusStopManager : MonoBehaviour
 
         return null;
     }
-    //TODO CHECK BUSSTOPS isOccupied COUNT
+
+    public async void CheckLastAvailableBusStop(Human human)
+    {
+        Debug.Log("MoveToBusStop 3 ");
+        bool isLastBusStop = busStops.Count(b => b.isOccupied) == 4;
+
+        if (isLastBusStop)
+        {
+            Debug.Log("MoveToBusStop 4 ");
+            EventManager.Execute(GameEvents.OnLevelFail);
+            await UniTask.WaitUntil(() => human.IsMoving == 0);
+            EventManager.Execute(GameEvents.OnLevelFailAndNotMove);
+            
+        }
+    }
+    
+    public void ClearBusStops()
+    {
+        foreach (BusStop busStop in busStops)
+        {
+            if (busStop != null)
+            {
+                _poolManager.ReturnToPool(ObjectType.BusStop, busStop.gameObject);
+            }
+        }
+
+        busStops.Clear();
+    }
 }

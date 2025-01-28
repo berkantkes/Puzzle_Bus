@@ -49,7 +49,7 @@ public class ObjectPoolManager : MonoBehaviour
         T component = pooledObject.GetComponent<T>();
         if (component == null)
         {
-            ReturnToPool(type, pooledObject); // Hatalı nesneyi geri koy
+            ReturnToPool(type, pooledObject); 
             return null;
         }
 
@@ -57,7 +57,6 @@ public class ObjectPoolManager : MonoBehaviour
     }
 
 
-    // Pool'a nesne geri koy
     public void ReturnToPool(ObjectType type, GameObject obj)
     {
         if (!poolDictionary.ContainsKey(type))
@@ -66,6 +65,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
 
         obj.SetActive(false);
+        obj.transform.SetParent(transform);
         poolDictionary[type].Enqueue(obj);
     }
 }

@@ -9,6 +9,9 @@ public class GridManager : MonoBehaviour
     private int _sizeX;
     private int _sizeY;
     private Vector3 _origin; 
+    
+    public int SizeX => _sizeX;
+    public int SizeY => _sizeY;
 
     public void Initialize(LevelData levelData, ObjectPoolManager poolManager)
     {
@@ -61,6 +64,24 @@ public class GridManager : MonoBehaviour
         return new Vector2Int(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
     }
     
-    public int SizeX => _sizeX;
-    public int SizeY => _sizeY;
+    public void ClearGrid()
+    {
+        if (gridCells == null) return;
+
+        for (int x = 0; x < _sizeX; x++)
+        {
+            for (int y = 0; y < _sizeY; y++)
+            {
+                if (gridCells[x, y] != null)
+                {
+                    _poolManager.ReturnToPool(ObjectType.GridCell, gridCells[x, y].gameObject);
+                    gridCells[x, y] = null;
+                }
+            }
+        }
+
+        _sizeX = 0;
+        _sizeY = 0;
+        gridCells = null;
+    }
 }

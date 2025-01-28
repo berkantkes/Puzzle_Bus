@@ -6,15 +6,17 @@ public class InputManager : MonoBehaviour
 {
     private HumanManager _humanManager;
     private GridManager _gridManager;
+    private GameManager _gameManager;
     
-    public void Initialize(HumanManager humanManager)
+    public void Initialize(GameManager gameManager, HumanManager humanManager)
     {
         _humanManager = humanManager;
+        _gameManager = gameManager;
     }
     
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && _gameManager.CurrentStatus == GameManager.GameStatus.Gameplay)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -28,7 +30,7 @@ public class InputManager : MonoBehaviour
     
     private void HandleClick(Vector3 worldPosition)
     {
-        _humanManager.HandleClick(worldPosition);
+        _humanManager.MoveHuman(worldPosition);
     }
     
 }

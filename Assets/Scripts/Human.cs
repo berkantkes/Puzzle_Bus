@@ -6,15 +6,34 @@ using UnityEngine;
 public class Human : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
-    private ColorType _colorType = ColorType.Red;
+    [SerializeField] private Renderer _renderer;
+    [SerializeField] private Material _outlineMaterial;
+
+    private Material[] _originalMaterials;
+    private Material[] _outlineMaterials;
+    private ColorType _colorType;
+    private bool _hasItMoved = false;
     private string _idleAnimationTriggerName = "Idle";
     private string _runAnimationTriggerName = "Run";
+    private int _isMoving = 0;
+    public int IsMoving => _isMoving;
 
     public ColorType ColorType => _colorType;
-
+    
+    public void Initialize()
+    {
+        _originalMaterials = _renderer.materials;
+        
+        _outlineMaterials = new Material[2];
+        _outlineMaterials[0] = _originalMaterials[0];
+        _outlineMaterials[1] = _outlineMaterial;
+    }
+    
     public void MoveAlongPath(List<Vector2Int> path, GridManager gridManager, float durationPerStep = 0.5f)
     {
         _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
+        _isMoving++;
+        _hasItMoved = true;
 
         Sequence moveSequence = DOTween.Sequence();
         foreach (Vector2Int gridPos in path)
@@ -29,18 +48,28 @@ public class Human : MonoBehaviour
         }
 
         moveSequence.OnComplete(() =>
-            _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1));
+            {
+                _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
+                _isMoving--;
+            }
+            );
     }
 
     public void MoveToPosition(Vector3 targetPosition, float duration = 1f)
     {
         _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
+        _isMoving++;
+        _hasItMoved = true;
 
         transform.DOMove(targetPosition, duration)
             .SetEase(Ease.Linear)
-            .OnUpdate(() => RotateTowards(targetPosition))
-            .OnComplete(() =>
-                _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1)); // Callback when the movement completes
+            .OnUpdate(() => RotateTowards(targetPosition)).OnComplete(() =>
+                {
+                    _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
+                    _isMoving--;
+                }
+            );
+        
     }
 
     private void RotateTowards(Vector3 targetPosition)
@@ -53,5 +82,19 @@ public class Human : MonoBehaviour
 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
+    }
+
+    public void UpdateMaterial(bool outline)
+    {
+        if (outline && !_hasItMoved)
+            _renderer.materials = _outlineMaterials;
+        else
+            _renderer.materials = _originalMaterials;
+    }
+
+    public void ClearHuman()
+    {
+        _renderer.materials = _originalMaterials;
+        _hasItMoved = false;
     }
 }
