@@ -16,7 +16,7 @@ public class LevelData
     public int gridSizeY = 4;
 
     [Header("Human Positions")]
-    public List<Vector2Int> humanStartPositions = new List<Vector2Int>(); 
+    public List<HumanData> HumanDatas = new List<HumanData>(); 
     
     [Header("Bus")]
     public List<ColorType> buses = new List<ColorType>();
@@ -25,3 +25,9 @@ public class LevelData
     public float time = 1;
 }
 
+[System.Serializable]
+public class HumanData
+{
+    public Vector2Int HumanStartPosition;
+    public ColorType HumanColorType;
+}

@@ -19,7 +19,7 @@ public class HumanManager : MonoBehaviour
         _pathfinding = pathfinding;
         _matchManager = matchManager;
         
-        foreach (Vector2Int startPosition in levelData.humanStartPositions)
+        foreach (HumanData startPosition in levelData.HumanDatas)
         {
             SpawnHuman(startPosition);
         }
@@ -27,17 +27,17 @@ public class HumanManager : MonoBehaviour
         CheckPathForOutline();
     }
     
-    public void SpawnHuman(Vector2Int position)
+    public void SpawnHuman(HumanData position)
     {
-        Vector3 worldPosition = _gridManager.GetWorldPosition(position);
+        Vector3 worldPosition = _gridManager.GetWorldPosition(position.HumanStartPosition);
         Human human = _poolManager.GetFromPool<Human>(ObjectType.Human, worldPosition, Quaternion.identity);
-        human.Initialize();
+        human.Initialize(position.HumanColorType);
         human.transform.SetParent(transform);
         human.transform.rotation = Quaternion.Euler(0, 180, 0);
         //Human human = humanObj.GetComponent<Human>();
 
         _humans.Add(human);
-        _gridManager.SetCellOccupied(position, true);
+        _gridManager.SetCellOccupied(position.HumanStartPosition, true);
     }
 
     public List<Human> GetHumans()

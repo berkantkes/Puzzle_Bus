@@ -20,13 +20,17 @@ public class Human : MonoBehaviour
 
     public ColorType ColorType => _colorType;
     
-    public void Initialize()
+    public void Initialize(ColorType colorType)
     {
-        _originalMaterials = _renderer.materials;
-        
+        _originalMaterials = new Material[1];
+        _originalMaterials[0] = ColorMaterialSelector.GetColorMaterial(colorType);
+
         _outlineMaterials = new Material[2];
         _outlineMaterials[0] = _originalMaterials[0];
-        _outlineMaterials[1] = _outlineMaterial;
+        _outlineMaterials[1] = _outlineMaterial;     
+
+        _renderer.materials = _originalMaterials; 
+        _colorType = colorType;           
     }
     
     public void MoveAlongPath(List<Vector2Int> path, GridManager gridManager, float durationPerStep = 0.5f)
