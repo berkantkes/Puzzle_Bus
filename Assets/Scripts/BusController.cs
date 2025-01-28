@@ -22,8 +22,7 @@ public class BusController : MonoBehaviour
         {
             Bus bus = _objectPoolManager.GetFromPool<Bus>(ObjectType.Bus, new Vector3(-i * 4, 0, + 3),
                 Quaternion.identity);
-            bus.Initialize(this);
-            bus.SetColorType(levelData.buses[i]);
+            bus.Initialize(this, levelData.buses[i]);
             _busList.Add(bus); 
         }
     }
@@ -44,18 +43,20 @@ public class BusController : MonoBehaviour
         Sequence busSequence = DOTween.Sequence();
 
         Bus firstBus = _busList[0];
-        busSequence.Append(firstBus.transform.DOMoveX(firstBus.transform.position.x + 10, 2f)
+        busSequence.Join(firstBus.transform.DOMoveX(firstBus.transform.position.x + 10, .2f)
             .SetEase(Ease.Linear));
 
-        for (int i = 1; i < _busList.Count; i++)
+        _busList.RemoveAt(0);
+        for (int i = 0; i < _busList.Count; i++)
         {
             Bus bus = _busList[i];
-            busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 4, 2f).SetEase(Ease.Linear));
+            busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 4, .2f)
+                .OnComplete(()=> EventManager.Execute(GameEvents.OnNewBusCome))
+                .SetEase(Ease.Linear));
         }
 
         busSequence.OnComplete(() =>
         {
-            _busList.RemoveAt(0);
 
             if (_busList.Count == 0)
             {

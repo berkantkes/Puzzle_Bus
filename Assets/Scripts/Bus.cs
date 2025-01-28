@@ -6,20 +6,24 @@ public class Bus : MonoBehaviour
 {
     //[SerializeField] private List<Material> _materialList;
     [SerializeField] private Transform _busOpenPosition;
+    [SerializeField] private Renderer _renderer;
     private ColorType _colorType;
     private int _humanCount = 0;
     private BusController _busController;
 
     public ColorType ColorType => _colorType;
 
-    public void Initialize(BusController busController)
+    public void Initialize(BusController busController, ColorType colorType)
     {
         _busController = busController;
+        _colorType = colorType;
+        
+        SetColorType();
     }
     
-    public void SetColorType(ColorType colorType)
+    private void SetColorType()
     {
-        _colorType = colorType;
+        _renderer.material = ColorMaterialSelector.GetColorMaterial(_colorType);
     }
     
     public Vector3 GetBusOpenPosition()

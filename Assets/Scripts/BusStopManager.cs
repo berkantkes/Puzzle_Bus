@@ -1,12 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;using System.Linq;
 
 
 public class BusStopManager : MonoBehaviour
 {
-    private List<BusStop> busStops = new List<BusStop>();
+    private List<BusStop> _busStops = new List<BusStop>();
     private ObjectPoolManager _poolManager; 
 
     public void Initialize(ObjectPoolManager poolManager)
@@ -14,7 +14,7 @@ public class BusStopManager : MonoBehaviour
         _poolManager = poolManager;
         CreateBusStops();
     }
-    
+
     private void CreateBusStops()
     {
         int busStopCount = 5;
@@ -29,15 +29,15 @@ public class BusStopManager : MonoBehaviour
             BusStop busStop = _poolManager.GetFromPool<BusStop>(ObjectType.BusStop, position, Quaternion.identity);
             busStop.Initialize(position);
             busStop.transform.SetParent(transform);
-            busStops.Add(busStop);
+            _busStops.Add(busStop);
         }
     }
 
     public BusStop GetAvailableBusStop()
     {
-        foreach (BusStop busStop in busStops)
+        foreach (BusStop busStop in _busStops)
         {
-            if (!busStop.isOccupied)
+            if (!busStop.GetIsOccupied())
             {
                 return busStop;
             }
@@ -48,22 +48,25 @@ public class BusStopManager : MonoBehaviour
 
     public async void CheckLastAvailableBusStop(Human human)
     {
-        Debug.Log("MoveToBusStop 3 ");
-        bool isLastBusStop = busStops.Count(b => b.isOccupied) == 4;
+        bool isLastBusStop = _busStops.Count(b => b.GetIsOccupied()) == 4;
 
         if (isLastBusStop)
         {
-            Debug.Log("MoveToBusStop 4 ");
             EventManager.Execute(GameEvents.OnLevelFail);
-            await UniTask.WaitUntil(() => human.IsMoving == 0);
-            EventManager.Execute(GameEvents.OnLevelFailAndNotMove);
+            // await UniTask.WaitUntil(() => human.IsMoving == 0);
+            // EventManager.Execute(GameEvents.OnLevelFailAndNotMove);
             
         }
+    }
+
+    public List<BusStop> GetBusStops()
+    {
+        return _busStops;
     }
     
     public void ClearBusStops()
     {
-        foreach (BusStop busStop in busStops)
+        foreach (BusStop busStop in _busStops)
         {
             if (busStop != null)
             {
@@ -71,6 +74,6 @@ public class BusStopManager : MonoBehaviour
             }
         }
 
-        busStops.Clear();
+        _busStops.Clear();
     }
 }

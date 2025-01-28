@@ -5,5 +5,6 @@ public enum GameEvents
     OnLevelFail,
     OnLevelFailAndNotMove,
     OnLevelSuccessful,
-    OnNewLevelLoad
+    OnNewLevelLoad,
+    OnNewBusCome
 }

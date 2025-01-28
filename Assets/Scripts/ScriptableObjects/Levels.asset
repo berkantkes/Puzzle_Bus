@@ -13,26 +13,25 @@ MonoBehaviour:
   m_Name: Levels
   m_EditorClassIdentifier: 
   levels:
-  - gridSizeX: 4
-    gridSizeY: 4
-    humanStartPositions:
-    - {x: 0, y: 0}
-    - {x: 0, y: 1}
-    - {x: 1, y: 2}
-    - {x: 3, y: 3}
-    - {x: 1, y: 1}
-    - {x: 3, y: 1}
-    buses: 00000000
-    time: 10
+  - gridSizeX: 6
+    gridSizeY: 6
+    HumanDatas:
+    - HumanStartPosition: {x: 0, y: 0}
+      HumanColorType: 3
+    - HumanStartPosition: {x: 1, y: 1}
+      HumanColorType: 4
+    - HumanStartPosition: {x: 1, y: 2}
+      HumanColorType: 1
+    - HumanStartPosition: {x: 1, y: 3}
+      HumanColorType: 3
+    - HumanStartPosition: {x: 2, y: 0}
+      HumanColorType: 3
+    - HumanStartPosition: {x: 2, y: 1}
+      HumanColorType: 1
+    buses: 0300000001000000
+    time: 100
   - gridSizeX: 5
     gridSizeY: 5
-    humanStartPositions:
-    - {x: 0, y: 0}
-    - {x: 0, y: 1}
-    - {x: 1, y: 0}
-    - {x: 1, y: 2}
-    - {x: 3, y: 3}
-    - {x: 1, y: 1}
-    - {x: 3, y: 1}
+    HumanDatas: []
     buses: 00000000
     time: 10

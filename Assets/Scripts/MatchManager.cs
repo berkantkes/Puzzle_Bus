@@ -13,9 +13,18 @@ public class MatchManager : MonoBehaviour
         _busStopManager = busStopManager;
     }
     
+    private void OnEnable()
+    {
+        EventManager.Subscribe(GameEvents.OnNewBusCome, CheckMatchNewBus);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Unsubscribe(GameEvents.OnNewBusCome, CheckMatchNewBus);
+    }
+    
     public void MoveToBusStop(Human human, GridManager gridManager)
     {
-        Debug.Log("MoveToBusStop 1 ");
         Bus bus = _busController.GetBus();
         BusStop busStop = _busStopManager.GetAvailableBusStop();
         
@@ -27,13 +36,38 @@ public class MatchManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("MoveToBusStop 2 ");
-            human.MoveToPosition(busStop.position);
+            human.MoveToPosition(busStop.GetPosition());
             _busStopManager.CheckLastAvailableBusStop(human);
-            busStop.isOccupied = true;
+            busStop.AttachHuman(human);
             //StartCoroutine(human.MoveToPosition(busStop.position));
         }
 
         //TODO FAIL LEVEL
     }
+    
+    private void CheckMatchNewBus()
+    {
+        Debug.Log("CheckMatchNewBus");
+        foreach (BusStop busStop in _busStopManager.GetBusStops())
+        {
+            Debug.Log("CheckMatchNewBus 1");
+            if (busStop != null)
+            {
+                Bus bus = _busController.GetBus();
+                Human human = busStop.GetAttachHuman();
+                Debug.Log("CheckMatchNewBus 2");
+                Debug.Log("CheckMatchNewBus 2 human.ColorType" + human.ColorType);
+                Debug.Log("CheckMatchNewBus 2 bus.ColorType" + bus.ColorType);
+                if (bus.ColorType == human.ColorType)
+                {
+                    Debug.Log("CheckMatchNewBus 3");
+                    human.MoveToPosition(bus.GetBusOpenPosition());
+                    //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
+                    bus.AddNewHuman();
+                    busStop.SetIsOccupied(false);
+                }
+            }
+        }
+    }
+    
 }
