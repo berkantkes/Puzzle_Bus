@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Serialization;
 
 public class LevelManager : MonoBehaviour
@@ -12,8 +13,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private InputManager _inputManager;
     [SerializeField] private TimerController _timerController;
     
-    public LevelData levelsData;
+    private const string PathOfData = "Datas/Levels";
 
+    private List<LevelData> _datas = new List<LevelData>();
     private GameManager _gameManager;
     private ObjectPoolManager _poolManager;
     private MatchManager _matchManager;
@@ -24,31 +26,18 @@ public class LevelManager : MonoBehaviour
 
     public void Initialize(GameManager gameManager, ObjectPoolManager poolManager, MatchManager matchManager, UiManager uiManager)
     {
+        _datas = GetDatas();
         _gameManager = gameManager;
         _poolManager = poolManager;
         _matchManager = matchManager;
         _uiManager = uiManager;
     }
     
-    private void OnEnable()
-    {
-    }
-    
-    private void OnDisable()
-    {
-    }
-    
     public void LoadLevel(int levelIndex)
     {
-        // if (levelIndex < 0 || levelIndex >= levelsData.levels.Count)
-        // {
-        //     Debug.LogError("Geçersiz seviye indeksi!");
-        //     return;
-        // }
-
         ClearCurrentLevel();
 
-        LevelData levelData = levelsData;
+        LevelData levelData = GetLevelData(levelIndex);
 
         _gridManager.Initialize(levelData, _poolManager);
         pathfinding = new Pathfinding(_gridManager);
@@ -58,8 +47,6 @@ public class LevelManager : MonoBehaviour
         _matchManager.Initialize(_busController, _busStopManager); //gamemanager init
         _inputManager.Initialize(_gameManager, _humanManager); // gamemanager init
         _timerController.Initialize(_gameManager, levelData.time, _uiManager); // gamemanager init
-        
-        
     }
 
     private void ClearCurrentLevel()
@@ -80,6 +67,23 @@ public class LevelManager : MonoBehaviour
         _busStopManager.ClearBusStops();
         _busController.ClearBuses();
         _humanManager.ClearHumans();
+    }
+    
+    public List<LevelData> GetDatas()
+    {
+        var levels = Resources.LoadAll<Levels>(PathOfData);
 
+        if (levels == null || levels.Length == 0)
+        {
+            Debug.LogError($"Resources klasöründen Datas/Levels altındaki Levels varlıkları yüklenemedi!");
+            return new List<LevelData>();
+        }
+
+        return new List<LevelData>(levels.Select(item => item.GetData())
+            .OrderBy(data => data.levelNumber).ToList());
+    }
+    public LevelData GetLevelData(int id)
+    {
+        return _datas.FirstOrDefault(data => data.levelNumber == id);
     }
 }

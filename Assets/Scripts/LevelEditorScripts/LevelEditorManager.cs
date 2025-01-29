@@ -275,7 +275,6 @@ public class LevelEditorManager : MonoBehaviour
     }
     public void UpdateExistingLevel(LevelData updatedLevelData)
     {
-        // Mevcut LevelData'yı içeren ScriptableObject'i bul
         var existingLevelAsset = GetAllLevels()
             .FirstOrDefault(level => level.Data.levelNumber == updatedLevelData.levelNumber);
 

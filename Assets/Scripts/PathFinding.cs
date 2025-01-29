@@ -98,7 +98,7 @@ public class Pathfinding
     
     public Vector2Int GetClosestTargetInTopRow(Vector2Int currentPosition)
     {
-        int topRow = _gridManager.SizeX - 1;
+        int topRow = _gridManager.SizeY - 1;
         Vector2Int closestTarget = new Vector2Int(-1, -1);
         int shortestPathCost = int.MaxValue;
 

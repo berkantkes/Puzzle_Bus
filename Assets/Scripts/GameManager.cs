@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UiManager _uiManager;
     [SerializeField] private ColorMaterialSelector _colorMaterialSelector;
     
-    private int _currentLevelIndex = 0;
+    private int _currentLevelIndex = 1;
 
     private GameStatus _currentStatus = GameStatus.None;
     public GameStatus CurrentStatus => _currentStatus;
@@ -89,6 +89,6 @@ public class GameManager : MonoBehaviour
 
     public int GetLevelIndex()
     {
-        return PlayerPrefs.GetInt("CurrentLevelIndex", 0); // Varsayılan seviye 0
+        return PlayerPrefs.GetInt("CurrentLevelIndex", 1); // Varsayılan seviye 0
     }
 }

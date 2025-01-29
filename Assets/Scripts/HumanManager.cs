@@ -89,7 +89,9 @@ public class HumanManager : MonoBehaviour
         {
             Vector2Int currentPosition = _gridManager.GetGridPosition(human.transform.position);
 
-            if (currentPosition.y != _gridManager.SizeX - 1)
+            Debug.Log(currentPosition);
+            
+            if (currentPosition.y != _gridManager.SizeY - 1)
             {
                 Vector2Int targetPosition = _pathfinding.GetClosestTargetInTopRow(currentPosition);
 
