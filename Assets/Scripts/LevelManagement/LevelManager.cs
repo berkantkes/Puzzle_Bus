@@ -12,6 +12,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TimerController _timerController;
 
     private const string LevelDataPath = "Datas/Levels";
+    private const string RandomLevelKey = "RandomLevelIndex";
 
     private List<LevelData> _levelDatas = new List<LevelData>();
     private GameManager _gameManager;
@@ -39,16 +40,8 @@ public class LevelManager : MonoBehaviour
 
         if (levelData == null)
         {
-            // List<LevelData> availableLevels = GetAvailableLevels(levelIndex);
-            //
-            // if (availableLevels.Count > 0)
-            // {
-            //     levelData = availableLevels[Random.Range(0, availableLevels.Count)];
-            // }
-            // else
-            // {
-            //     return;
-            // }
+            levelData = GetOrAssignRandomLevel(levelIndex);
+            if (levelData == null) return; 
         }
 
         _gridManager.Initialize(levelData, _poolManager);
@@ -60,11 +53,32 @@ public class LevelManager : MonoBehaviour
         _inputManager.Initialize(_gameManager, _humanManager);
         _timerController.Initialize(_gameManager, levelData.time, _uiManager);
     }
+
+    private LevelData GetOrAssignRandomLevel(int maxIndex)
+    {
+        if (PlayerPrefs.HasKey(RandomLevelKey))
+        {
+            int savedRandomLevel = PlayerPrefs.GetInt(RandomLevelKey);
+            LevelData savedLevel = _levelDatas.FirstOrDefault(data => data.levelNumber == savedRandomLevel);
+            if (savedLevel != null) return savedLevel;
+        }
+
+        List<LevelData> availableLevels = GetAvailableLevels(maxIndex);
+        if (availableLevels.Count > 0)
+        {
+            LevelData randomLevel = availableLevels[Random.Range(0, availableLevels.Count)];
+            PlayerPrefs.SetInt(RandomLevelKey, randomLevel.levelNumber); 
+            PlayerPrefs.Save();
+            return randomLevel;
+        }
+
+        return null; 
+    }
+
     private List<LevelData> GetAvailableLevels(int maxIndex)
     {
         return _levelDatas.Where(data => data.levelNumber < maxIndex).ToList();
     }
-
 
     private void ClearCurrentLevel()
     {
@@ -98,12 +112,7 @@ public class LevelManager : MonoBehaviour
     private List<LevelData> LoadAllLevelData()
     {
         var levels = Resources.LoadAll<Levels>(LevelDataPath);
-
-        if (levels == null || levels.Length == 0)
-        {
-            return new List<LevelData>();
-        }
-
+        if (levels == null || levels.Length == 0) return new List<LevelData>();
         return levels.Select(level => level.GetData()).OrderBy(data => data.levelNumber).ToList();
     }
 
