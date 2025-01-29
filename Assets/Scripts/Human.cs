@@ -61,11 +61,32 @@ public class Human : MonoBehaviour
         });
     }
 
-    public void MoveToPosition(Vector3 targetPosition, float speed = 7f)
+    public void MoveToBusStopPosition(Vector3 targetPosition)
     {
+        float speed = 7f;
         _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
         _isMoving++;
         _hasItMoved = true;
+
+        float distance = Vector3.Distance(transform.position, targetPosition);
+        float duration = distance / speed; // Süre = Mesafe / Hız
+
+        transform.DOMove(targetPosition, duration)
+            .SetEase(Ease.Linear)
+            .OnUpdate(() => RotateTowards(targetPosition))
+            .OnComplete(() =>
+            {
+                _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
+                _isMoving--;
+            });
+    }
+    public void MoveToBusPosition(Vector3 targetPosition, Bus bus)
+    {
+        float speed = 7f;
+        _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
+        _isMoving++;
+        _hasItMoved = true;
+        transform.SetParent(bus.transform);
 
         float distance = Vector3.Distance(transform.position, targetPosition);
         float duration = distance / speed; // Süre = Mesafe / Hız

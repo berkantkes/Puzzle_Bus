@@ -14,14 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Data:
     levelNumber: 2
-    gridSizeX: 2
-    gridSizeY: 6
+    gridSizeX: 4
+    gridSizeY: 4
     HumanDatas:
+    - HumanStartPosition: {x: 0, y: 0}
+      HumanColorType: 1
     - HumanStartPosition: {x: 0, y: 1}
-      HumanColorType: 0
-    - HumanStartPosition: {x: 1, y: 3}
+      HumanColorType: 1
+    - HumanStartPosition: {x: 0, y: 2}
+      HumanColorType: 1
+    - HumanStartPosition: {x: 1, y: 2}
+      HumanColorType: 5
+    - HumanStartPosition: {x: 1, y: 1}
+      HumanColorType: 5
+    - HumanStartPosition: {x: 1, y: 0}
+      HumanColorType: 5
+    - HumanStartPosition: {x: 2, y: 2}
       HumanColorType: 4
-    - HumanStartPosition: {x: 0, y: 5}
-      HumanColorType: 3
-    buses: 0400000002000000
+    - HumanStartPosition: {x: 2, y: 1}
+      HumanColorType: 4
+    - HumanStartPosition: {x: 2, y: 0}
+      HumanColorType: 4
+    buses: 050000000400000001000000
     time: 30

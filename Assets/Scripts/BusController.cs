@@ -10,6 +10,7 @@ public class BusController : MonoBehaviour
 {
     private ObjectPoolManager _objectPoolManager;
     private List<Bus> _busList = new List<Bus>();
+    private List<Bus> _busListCopy = new List<Bus>();
     private int offset = -2;
     
     public void Initialize (LevelData levelData, ObjectPoolManager poolManager)
@@ -26,6 +27,7 @@ public class BusController : MonoBehaviour
                 Quaternion.identity);
             bus.Initialize(this, levelData.buses[i]);
             _busList.Add(bus); 
+            _busListCopy.Add(bus);
         }
     }
 
@@ -34,7 +36,7 @@ public class BusController : MonoBehaviour
         return _busList.First();
     }
     
-    public async Task MoveBusesAndRemoveFirst(Human human)
+    public async void MoveBusesAndRemoveFirst(HashSet<Human> humans)
     {
         if (_busList == null || _busList.Count == 0)
         {
@@ -42,7 +44,7 @@ public class BusController : MonoBehaviour
             return;
         }
 
-        await UniTask.WaitUntil(() => human.IsMoving == 0);
+        await UniTask.WaitUntil(() => humans.All(h => h.IsMoving == 0));
         Sequence busSequence = DOTween.Sequence();
 
         Bus firstBus = _busList[0];
@@ -57,6 +59,17 @@ public class BusController : MonoBehaviour
                 .OnComplete(()=> EventManager.Execute(GameEvents.OnNewBusCome))
                 .SetEase(Ease.Linear));
         }
+        // for (int i = 0; i < _busList.Count; i++)
+        // {
+        //     Bus bus = _busList[i];
+        //     busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 7.4f, .2f)
+        //         .OnComplete(()=>
+        //         {
+        //             _busList.RemoveAt(0);
+        //             EventManager.Execute(GameEvents.OnNewBusCome);
+        //         })
+        //         .SetEase(Ease.Linear));
+        // }
 
         busSequence.OnComplete(() =>
         {
@@ -72,10 +85,11 @@ public class BusController : MonoBehaviour
     }
     public void ClearBuses()
     {
-        foreach (Bus bus in _busList)
+        foreach (Bus bus in _busListCopy)
         {
             if (bus != null)
             {
+                bus.ClearBus();
                 _objectPoolManager.ReturnToPool(ObjectType.Bus, bus.gameObject);
             }
         }

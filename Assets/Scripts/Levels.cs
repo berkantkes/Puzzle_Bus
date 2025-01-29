@@ -26,7 +26,7 @@ public class LevelData
     public List<ColorType> buses = new List<ColorType>();
     
     [Header("Time")]
-    public float time = 1;
+    public float time = 50;
 }
 
 [System.Serializable]

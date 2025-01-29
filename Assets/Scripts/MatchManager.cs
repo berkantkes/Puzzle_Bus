@@ -30,13 +30,13 @@ public class MatchManager : MonoBehaviour
         
         if (bus.ColorType == human.ColorType)
         {
-            human.MoveToPosition(bus.GetBusOpenPosition());
+            human.MoveToBusPosition(bus.GetBusOpenPosition(), bus);
             //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
             bus.AddNewHuman(human);
         }
         else
         {
-            human.MoveToPosition(busStop.GetPosition());
+            human.MoveToBusStopPosition(busStop.GetPosition());
             _busStopManager.CheckLastAvailableBusStop(human);
             busStop.AttachHuman(human);
             //StartCoroutine(human.MoveToPosition(busStop.position));
@@ -61,7 +61,7 @@ public class MatchManager : MonoBehaviour
                 if (bus.ColorType == human.ColorType)
                 {
                     Debug.Log("CheckMatchNewBus 3");
-                    human.MoveToPosition(bus.GetBusOpenPosition());
+                    human.MoveToBusPosition(bus.GetBusOpenPosition(), bus);
                     //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
                     bus.AddNewHuman(human);
                     busStop.SetIsOccupied(false);

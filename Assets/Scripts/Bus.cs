@@ -10,6 +10,7 @@ public class Bus : MonoBehaviour
     private ColorType _colorType;
     private int _humanCount = 0;
     private BusController _busController;
+    private HashSet<Human> _humanList = new HashSet<Human>();
 
     public ColorType ColorType => _colorType;
 
@@ -34,9 +35,16 @@ public class Bus : MonoBehaviour
     public void AddNewHuman(Human human)
     {
         _humanCount++;
+        _humanList.Add(human);
         if (_humanCount == 3)
         {
-            _busController.MoveBusesAndRemoveFirst(human);
+            _busController.MoveBusesAndRemoveFirst(_humanList);
         }
+    }
+
+
+    public void ClearBus()
+    {
+        _humanList.Clear();
     }
 }
