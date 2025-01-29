@@ -74,7 +74,7 @@ public class MatchManager : MonoBehaviour
                 if (bus.ColorType == human.ColorType)
                 {
                     AssignHumanToBus(human, bus);
-                    busStop.AttachHuman(null);
+                    busStop.DetachHuman();
                 }
             }
         }

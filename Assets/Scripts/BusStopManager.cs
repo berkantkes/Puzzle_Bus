@@ -70,6 +70,7 @@ public class BusStopManager : MonoBehaviour
         {
             if (busStop != null)
             {
+                busStop.DetachHuman();
                 _poolManager.ReturnToPool(ObjectType.BusStop, busStop.gameObject);
             }
         }

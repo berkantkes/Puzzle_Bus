@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -11,10 +9,8 @@ public class EditorLevelManager : MonoBehaviour
     [SerializeField] private GameObject levelPrefab;
     [SerializeField] private Transform levelParent;
     [SerializeField] private ScrollRect scrollRect;
-        
+    
     private const string PathOfData = "Datas/Levels";
-    private List<LevelData> _datas = new List<LevelData>();
-    private int _totalLevelCount;
     private LevelEditorManager _levelEditorManager;
 
     public void Initialize(LevelEditorManager levelEditorManager)
@@ -22,100 +18,64 @@ public class EditorLevelManager : MonoBehaviour
         _levelEditorManager = levelEditorManager;
         CreateLevels();
     }
-    
-    // public void CreateLevels()
-    // {
-    //     for(var i = 0; i < levelParent.childCount; i++)
-    //     {
-    //         Destroy(levelParent.GetChild(i).gameObject);
-    //     }
-    //         
-    //     _datas = GetDatas();
-    //     _totalLevelCount = GetTotalLevelCount();
-    //     for (var i = 0; i < _totalLevelCount; i++)
-    //     {
-    //         var level = Instantiate(levelPrefab, levelParent);
-    //         var i1 = i;
-    //         level.GetComponent<Button>().onClick.AddListener(() => _levelEditorManager.LoadLevel(_datas[i1].levelNumber));
-    //         level.GetComponentsInChildren<TextMeshProUGUI>().First().text = $"Level {_datas[i].levelNumber}";
-    //     }
-    //     scrollRect.verticalNormalizedPosition = 0;
-    // }
-    
+
     public void CreateLevels()
     {
-        // Mevcut seviyeleri temizle
-        for (var i = 0; i < levelParent.childCount; i++)
-        {
-            Destroy(levelParent.GetChild(i).gameObject);
-        }
-            
-        // Verileri al
-        _datas = GetDatas();
-        if (_datas.Count == 0)
-        {
-            Debug.LogWarning("Hiç level bulunamadı. Lütfen Resources klasörünü kontrol edin.");
-            return;
-        }
+        ClearExistingLevels();
+        
+        List<LevelData> levelDatas = GetLevels();
+        if (!levelDatas.Any()) return;
 
-        _totalLevelCount = _datas.Count;
-        for (var i = 0; i < _totalLevelCount; i++)
+        PopulateLevels(levelDatas);
+        ResetScrollPosition();
+    }
+
+    private void ClearExistingLevels()
+    {
+        foreach (Transform child in levelParent)
         {
-            // Level butonlarını oluştur
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void PopulateLevels(List<LevelData> levelDatas)
+    {
+        foreach (var levelData in levelDatas)
+        {
             var level = Instantiate(levelPrefab, levelParent);
-            var i1 = i;
-            level.GetComponent<Button>().onClick.AddListener(() => _levelEditorManager.LoadLevel(_datas[i1].levelNumber));
-            level.GetComponentsInChildren<TextMeshProUGUI>().First().text = $"Level {_datas[i].levelNumber}";
+            level.GetComponent<Button>().onClick.AddListener(() => _levelEditorManager.LoadLevel(levelData.levelNumber));
+            level.GetComponentsInChildren<TextMeshProUGUI>().First().text = $"Level {levelData.levelNumber}";
         }
-
-        // Scroll konumunu sıfırla
-        scrollRect.verticalNormalizedPosition = 1; // En üstte başlasın
     }
 
-            
-    private int GetTotalLevelCount()
+    private void ResetScrollPosition()
     {
-        return _datas.Count;
-    }
-    
-    public int DetectMinimumMissingLevelID()
-    {
-        if(_datas.Count == 0) return 1;
-        var maxLevel = _datas.Max(data => data.levelNumber);
-        if(maxLevel == 0) return 1;
-        var allLevels = Enumerable.Range(1, maxLevel).ToList();
-        var existingLevels = _datas.Select(data => data.levelNumber).ToList();
-
-        var missingLevels = allLevels.Except(existingLevels).ToList();
-
-        return missingLevels.Any() ? missingLevels.Min() : maxLevel + 1;
-    }
-    
-    public LevelData GetLevelData(int id)
-    {
-        return _datas.FirstOrDefault(data => data.levelNumber == id);
+        scrollRect.verticalNormalizedPosition = 1;
     }
 
-    // public List<LevelData> GetDatas()
-    // {
-    //     return _datas = new List<LevelData>(Resources.LoadAll<Levels>(PathOfData)
-    //         .Select(item => item.GetData())
-    //         .OrderBy(data => data.levelNumber).ToList());
-    // }
-    
-    public List<LevelData> GetDatas()
+    public List<LevelData> GetLevels()
     {
         var levels = Resources.LoadAll<Levels>(PathOfData);
 
         if (levels == null || levels.Length == 0)
         {
-            Debug.LogError($"Resources klasöründen Datas/Levels altındaki Levels varlıkları yüklenemedi!");
+            Debug.LogError($"Resources klasöründen {PathOfData} altındaki Levels varlıkları yüklenemedi!");
             return new List<LevelData>();
         }
 
-        return new List<LevelData>(levels.Select(item => item.GetData())
-            .OrderBy(data => data.levelNumber).ToList());
+        return levels.Select(item => item.GetData()).OrderBy(data => data.levelNumber).ToList();
     }
 
-    
+    public int DetectMinimumMissingLevelID()
+    {
+        List<LevelData> levels = GetLevels();
+        if (!levels.Any()) return 1;
+
+        int maxLevel = levels.Max(data => data.levelNumber);
+        var allLevels = Enumerable.Range(1, maxLevel).ToList();
+        var existingLevels = levels.Select(data => data.levelNumber).ToList();
+        var missingLevels = allLevels.Except(existingLevels).ToList();
+
+        return missingLevels.Any() ? missingLevels.Min() : maxLevel + 1;
+    }
 }

@@ -37,12 +37,26 @@ public class LevelManager : MonoBehaviour
         ClearCurrentLevel();
         LevelData levelData = GetLevelData(levelIndex);
 
+        // Eğer istenen level yoksa, önceki levellerden rastgele bir tane seç
         if (levelData == null)
         {
-            Debug.LogError($"Level {levelIndex} bulunamadı!");
-            return;
+            Debug.LogWarning($"Level {levelIndex} bulunamadı! Önceki levellerden rastgele bir tane seçiliyor...");
+
+            List<LevelData> availableLevels = GetAvailableLevels(levelIndex);
+
+            if (availableLevels.Count > 0)
+            {
+                levelData = availableLevels[Random.Range(0, availableLevels.Count)];
+                Debug.Log($"Seçilen rastgele level: {levelData.levelNumber}");
+            }
+            else
+            {
+                Debug.LogError("Mevcut hiçbir level bulunamadı!");
+                return;
+            }
         }
 
+        // Seçilen leveli yükle
         _gridManager.Initialize(levelData, _poolManager);
         _pathfinding = new Pathfinding(_gridManager);
         _busStopManager.Initialize(_poolManager);
@@ -52,6 +66,11 @@ public class LevelManager : MonoBehaviour
         _inputManager.Initialize(_gameManager, _humanManager);
         _timerController.Initialize(_gameManager, levelData.time, _uiManager);
     }
+    private List<LevelData> GetAvailableLevels(int maxIndex)
+    {
+        return _levelDatas.Where(data => data.levelNumber < maxIndex).ToList();
+    }
+
 
     private void ClearCurrentLevel()
     {
