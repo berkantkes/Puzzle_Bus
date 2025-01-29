@@ -40,20 +40,16 @@ public class LevelManager : MonoBehaviour
         // Eğer istenen level yoksa, önceki levellerden rastgele bir tane seç
         if (levelData == null)
         {
-            Debug.LogWarning($"Level {levelIndex} bulunamadı! Önceki levellerden rastgele bir tane seçiliyor...");
-
-            List<LevelData> availableLevels = GetAvailableLevels(levelIndex);
-
-            if (availableLevels.Count > 0)
-            {
-                levelData = availableLevels[Random.Range(0, availableLevels.Count)];
-                Debug.Log($"Seçilen rastgele level: {levelData.levelNumber}");
-            }
-            else
-            {
-                Debug.LogError("Mevcut hiçbir level bulunamadı!");
-                return;
-            }
+            // List<LevelData> availableLevels = GetAvailableLevels(levelIndex);
+            //
+            // if (availableLevels.Count > 0)
+            // {
+            //     levelData = availableLevels[Random.Range(0, availableLevels.Count)];
+            // }
+            // else
+            // {
+            //     return;
+            // }
         }
 
         // Seçilen leveli yükle

@@ -21,8 +21,6 @@ MonoBehaviour:
       HumanColorType: 4
     - HumanStartPosition: {x: 2, y: 4}
       HumanColorType: 4
-    - HumanStartPosition: {x: 0, y: 1}
-      HumanColorType: 4
     - HumanStartPosition: {x: 1, y: 0}
       HumanColorType: 4
     - HumanStartPosition: {x: 0, y: 4}

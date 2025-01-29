@@ -79,6 +79,12 @@ public class LevelEditorManager : MonoBehaviour
     }
     private PassangerEditor SelectPassangerDropdown()
     {
+        if (_selectIndex == 6)
+        {
+            RemovePassengerAtGrid();
+            return null;
+        }
+
         var colorMapping = new Dictionary<int, ColorType>
         {
             { 0, ColorType.White },
@@ -88,9 +94,6 @@ public class LevelEditorManager : MonoBehaviour
             { 4, ColorType.Pink },
             { 5, ColorType.Purple }
         };
-
-        if (_selectIndex == 6)
-            return null;
 
         if (colorMapping.TryGetValue(_selectIndex, out var selectedColor))
         {
@@ -102,6 +105,36 @@ public class LevelEditorManager : MonoBehaviour
         }
 
         return _passanger;
+    }
+
+    private void RemovePassengerAtGrid()
+    {
+        var ray = _camera.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out var hit))
+        {
+            if (hit.transform.TryGetComponent(out SingleGridController tileEditor))
+            {
+                Vector2Int currentPosition = _gridManager.GetGridPosition(hit.point);
+
+                // Sahnedeki Passanger'ı bul ve kaldır
+                foreach (Transform child in _gridManager.transform)
+                {
+                    if (child.TryGetComponent<PassangerEditor>(out var passenger))
+                    {
+                        Vector2Int passengerPosition = _gridManager.GetGridPosition(passenger.transform.position);
+                    
+                        if (passengerPosition == currentPosition)
+                        {
+                            Destroy(passenger.gameObject);
+                            break;
+                        }
+                    }
+                }
+
+                // HumanData listesinden ilgili veriyi kaldır
+                _humanDatas.RemoveAll(human => human.HumanStartPosition == currentPosition);
+            }
+        }
     }
 
 

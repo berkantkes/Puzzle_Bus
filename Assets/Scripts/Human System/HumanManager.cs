@@ -81,6 +81,7 @@ public class HumanManager : MonoBehaviour
         else
         {
             human.UpdateMaterial(false);
+            _gridManager.SetCellOccupied(currentPosition, false);
             _matchManager.MoveToBusStop(human, _gridManager);
         }
     }
