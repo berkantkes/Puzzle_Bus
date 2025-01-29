@@ -19,7 +19,8 @@ public class LevelEditorManager : MonoBehaviour
     [SerializeField] private Camera _camera;
     [SerializeField] private TMP_Dropdown _dropdown;
     [SerializeField] private PassangerEditor _passanger; 
-    [SerializeField] private ColorMaterialSelector _colorMaterialSelector; 
+    [SerializeField] private ColorMaterialSelector _colorMaterialSelector;
+    [SerializeField] private TMP_Text _levelText;
     // [SerializeField] private PassangerEditor _blackPassanger; 
     // [SerializeField] private PassangerEditor _redPassanger; 
     // [SerializeField] private PassangerEditor _yellowPassanger; 
@@ -45,6 +46,7 @@ public class LevelEditorManager : MonoBehaviour
 
         _editorLevelManager.Initialize(this);
         _colorMaterialSelector.Initialize();
+        LoadLevel(1);
     }
     
 
@@ -185,6 +187,7 @@ public class LevelEditorManager : MonoBehaviour
         // cellsEditor = new List<CellArea>(data.cells);
         CreateGrid();
         PlacePassengersOnGrid(_humanDatas);
+        _levelText.SetText("LEVEL " + levelNumber);
         //UpdateLevelUI(levelIDEditor, $"Level {levelIDEditor} loaded!");
                 
         //_currentLevelData = data;
@@ -243,8 +246,10 @@ public class LevelEditorManager : MonoBehaviour
             HumanDatas = _humanDatas,
         };
         
+        ClearPassengers();
         CreateAndSaveLevelAsset(newLevelData);
         CreateGrid();
+        LoadLevel(minLevelNumber);
     }
     
     private void CreateAndSaveLevelAsset(LevelData levelData)

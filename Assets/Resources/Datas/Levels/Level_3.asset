@@ -16,30 +16,6 @@ MonoBehaviour:
     levelNumber: 3
     gridSizeX: 4
     gridSizeY: 6
-    HumanDatas:
-    - HumanStartPosition: {x: 0, y: 0}
-      HumanColorType: 0
-    - HumanStartPosition: {x: 2, y: 1}
-      HumanColorType: 0
-    - HumanStartPosition: {x: 0, y: 2}
-      HumanColorType: 0
-    - HumanStartPosition: {x: 2, y: 2}
-      HumanColorType: 2
-    - HumanStartPosition: {x: 3, y: 1}
-      HumanColorType: 2
-    - HumanStartPosition: {x: 1, y: 0}
-      HumanColorType: 2
-    - HumanStartPosition: {x: 2, y: 0}
-      HumanColorType: 4
-    - HumanStartPosition: {x: 1, y: 1}
-      HumanColorType: 4
-    - HumanStartPosition: {x: 3, y: 2}
-      HumanColorType: 4
-    - HumanStartPosition: {x: 1, y: 2}
-      HumanColorType: 5
-    - HumanStartPosition: {x: 0, y: 1}
-      HumanColorType: 5
-    - HumanStartPosition: {x: 3, y: 0}
-      HumanColorType: 5
-    buses: 
+    HumanDatas: []
+    buses: 00000000040000000500000002000000
     time: 30
