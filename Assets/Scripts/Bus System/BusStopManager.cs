@@ -53,8 +53,6 @@ public class BusStopManager : MonoBehaviour
         if (isLastBusStop)
         {
             EventManager.Execute(GameEvents.OnLevelFail);
-            // await UniTask.WaitUntil(() => human.IsMoving == 0);
-            // EventManager.Execute(GameEvents.OnLevelFailAndNotMove);
             
         }
     }

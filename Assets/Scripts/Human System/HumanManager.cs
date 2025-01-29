@@ -11,8 +11,8 @@ public class HumanManager : MonoBehaviour
     private Pathfinding _pathfinding;
     private MatchManager _matchManager;
 
-    private const float SelectionRadius = 0.5f;  // İnsan seçme hassasiyeti
-    private const float TargetDistanceThreshold = 0.1f;  // Hedefe ulaşma eşiği
+    private const float SelectionRadius = 0.5f; 
+    private const float TargetDistanceThreshold = 0.1f; 
     private static readonly Vector2Int InvalidGridPosition = new Vector2Int(-1, -1);
 
     public void Initialize(GridManager gridManager, ObjectPoolManager poolManager, Pathfinding pathfinding, MatchManager matchManager, LevelData levelData)

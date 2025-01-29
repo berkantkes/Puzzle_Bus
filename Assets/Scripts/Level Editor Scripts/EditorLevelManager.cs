@@ -59,7 +59,6 @@ public class EditorLevelManager : MonoBehaviour
 
         if (levels == null || levels.Length == 0)
         {
-            Debug.LogError($"Resources klasöründen {PathOfData} altındaki Levels varlıkları yüklenemedi!");
             return new List<LevelData>();
         }
 

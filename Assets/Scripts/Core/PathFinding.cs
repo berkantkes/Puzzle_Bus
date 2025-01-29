@@ -9,10 +9,10 @@ public class Pathfinding
     private const int MovementCost = 1;
     private readonly Vector2Int[] _directions = 
     {
-        new Vector2Int(0, 1),  // Yukarı
-        new Vector2Int(0, -1), // Aşağı
-        new Vector2Int(1, 0),  // Sağ
-        new Vector2Int(-1, 0)  // Sol
+        new Vector2Int(0, 1), 
+        new Vector2Int(0, -1),
+        new Vector2Int(1, 0), 
+        new Vector2Int(-1, 0)  
     };
 
     public Pathfinding(GridManager gridManager)
@@ -57,7 +57,7 @@ public class Pathfinding
             }
         }
 
-        return null; // Yol bulunamadı
+        return null;
     }
 
     private List<Vector2Int> GetNeighbors(Vector2Int current)
@@ -98,7 +98,7 @@ public class Pathfinding
         }
 
         path.Reverse();
-        path.RemoveAt(0); // Başlangıç noktasını çıkartıyoruz
+        path.RemoveAt(0);
         return path;
     }
 

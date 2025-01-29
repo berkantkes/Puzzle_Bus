@@ -29,7 +29,6 @@ public class MatchManager : MonoBehaviour
 
         if (bus == null || busStop == null)
         {
-            Debug.LogWarning("Bus or BusStop not found! Human cannot be assigned.");
             return;
         }
 

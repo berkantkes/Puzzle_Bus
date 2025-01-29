@@ -11,9 +11,9 @@ public class GridManager : MonoBehaviour
     public int SizeX => _sizeX;
     public int SizeY => _sizeY;
 
-    private const float CellOffset = 0.5f;  // Hücre merkezini hesaplamak için ofset
-    private float _gridCenterOffsetX;       // Grid'in X ekseninde merkezleme ofseti
-    private float _gridBottomOffsetZ;       // Grid'in Z ekseninde alt kenar ofseti
+    private const float CellOffset = 0.5f;
+    private float _gridCenterOffsetX;     
+    private float _gridBottomOffsetZ;      
 
     public void Initialize(LevelData levelData, ObjectPoolManager poolManager)
     {
@@ -22,8 +22,8 @@ public class GridManager : MonoBehaviour
         _sizeY = levelData.gridSizeY;
         float boardCenter = _sizeX / 2f;
 
-        _gridCenterOffsetX = -boardCenter + CellOffset;  // Grid'in X ekseninde ortalanması
-        _gridBottomOffsetZ = -_sizeY + CellOffset;         // Grid'in Z ekseninde tabana hizalanması
+        _gridCenterOffsetX = -boardCenter + CellOffset; 
+        _gridBottomOffsetZ = -_sizeY + CellOffset;        
 
         _origin = new Vector3(_gridCenterOffsetX, 0, _gridBottomOffsetZ);
         _gridCells = new SingleGridController[_sizeX, _sizeY];

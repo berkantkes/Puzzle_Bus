@@ -31,8 +31,6 @@ public abstract class InputFieldValueController : MonoBehaviour
             inputField.text = _defaultValue.ToString();
             HandleValueChanged(_defaultValue);
         }
-        
-        Debug.Log("Controller initialized with default value: " + _defaultValue);
     }
     
     private void Start()

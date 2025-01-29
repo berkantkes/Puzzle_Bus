@@ -37,7 +37,6 @@ public class LevelManager : MonoBehaviour
         ClearCurrentLevel();
         LevelData levelData = GetLevelData(levelIndex);
 
-        // Eğer istenen level yoksa, önceki levellerden rastgele bir tane seç
         if (levelData == null)
         {
             // List<LevelData> availableLevels = GetAvailableLevels(levelIndex);
@@ -52,7 +51,6 @@ public class LevelManager : MonoBehaviour
             // }
         }
 
-        // Seçilen leveli yükle
         _gridManager.Initialize(levelData, _poolManager);
         _pathfinding = new Pathfinding(_gridManager);
         _busStopManager.Initialize(_poolManager);
@@ -103,7 +101,6 @@ public class LevelManager : MonoBehaviour
 
         if (levels == null || levels.Length == 0)
         {
-            Debug.LogError($"Resources klasöründen '{LevelDataPath}' altındaki Levels varlıkları yüklenemedi!");
             return new List<LevelData>();
         }
 

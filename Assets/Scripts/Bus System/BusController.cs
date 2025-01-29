@@ -40,7 +40,6 @@ public class BusController : MonoBehaviour
     {
         if (_busList == null || _busList.Count == 0)
         {
-            Debug.LogWarning("Bus listesi boş!");
             return;
         }
 
@@ -59,17 +58,6 @@ public class BusController : MonoBehaviour
                 .OnComplete(()=> EventManager.Execute(GameEvents.OnNewBusCome))
                 .SetEase(Ease.Linear));
         }
-        // for (int i = 0; i < _busList.Count; i++)
-        // {
-        //     Bus bus = _busList[i];
-        //     busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 7.4f, .2f)
-        //         .OnComplete(()=>
-        //         {
-        //             _busList.RemoveAt(0);
-        //             EventManager.Execute(GameEvents.OnNewBusCome);
-        //         })
-        //         .SetEase(Ease.Linear));
-        // }
 
         busSequence.OnComplete(() =>
         {

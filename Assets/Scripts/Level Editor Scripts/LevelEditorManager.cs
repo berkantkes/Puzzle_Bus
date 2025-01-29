@@ -99,10 +99,6 @@ public class LevelEditorManager : MonoBehaviour
         {
             _passanger.Initialize(selectedColor);
         }
-        else
-        {
-            Debug.Log("Other option selected");
-        }
 
         return _passanger;
     }
@@ -116,7 +112,6 @@ public class LevelEditorManager : MonoBehaviour
             {
                 Vector2Int currentPosition = _gridManager.GetGridPosition(hit.point);
 
-                // Sahnedeki Passanger'ı bul ve kaldır
                 foreach (Transform child in _gridManager.transform)
                 {
                     if (child.TryGetComponent<PassangerEditor>(out var passenger))
@@ -131,7 +126,6 @@ public class LevelEditorManager : MonoBehaviour
                     }
                 }
 
-                // HumanData listesinden ilgili veriyi kaldır
                 _humanDatas.RemoveAll(human => human.HumanStartPosition == currentPosition);
             }
         }
