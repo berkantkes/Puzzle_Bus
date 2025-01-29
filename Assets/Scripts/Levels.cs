@@ -1,16 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Levels", menuName = "Game/Levels")]
 public class Levels : ScriptableObject
 {
-    [Header("Tüm Level Bilgileri")]
-    public List<LevelData> levels = new List<LevelData>();
+    public LevelData Data;
+    public LevelData GetData() => Data;
 }
 
-[System.Serializable]
+[Serializable]
 public class LevelData
 {
+    [Header(("Level"))] 
+    public int levelNumber;
+    
     [Header("Grid ")]
     public int gridSizeX = 4;
     public int gridSizeY = 4;
@@ -30,4 +34,10 @@ public class HumanData
 {
     public Vector2Int HumanStartPosition;
     public ColorType HumanColorType;
+
+    public HumanData(Vector2Int humanStartPosition, ColorType humanColorType)
+    {
+        HumanStartPosition = humanStartPosition;
+        HumanColorType = humanColorType;
+    }
 }

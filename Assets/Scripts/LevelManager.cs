@@ -12,7 +12,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private InputManager _inputManager;
     [SerializeField] private TimerController _timerController;
     
-    public Levels levelsData;
+    public LevelData levelsData;
 
     private GameManager _gameManager;
     private ObjectPoolManager _poolManager;
@@ -40,15 +40,15 @@ public class LevelManager : MonoBehaviour
     
     public void LoadLevel(int levelIndex)
     {
-        if (levelIndex < 0 || levelIndex >= levelsData.levels.Count)
-        {
-            Debug.LogError("Geçersiz seviye indeksi!");
-            return;
-        }
+        // if (levelIndex < 0 || levelIndex >= levelsData.levels.Count)
+        // {
+        //     Debug.LogError("Geçersiz seviye indeksi!");
+        //     return;
+        // }
 
         ClearCurrentLevel();
 
-        LevelData levelData = levelsData.levels[levelIndex];
+        LevelData levelData = levelsData;
 
         _gridManager.Initialize(levelData, _poolManager);
         pathfinding = new Pathfinding(_gridManager);
