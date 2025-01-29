@@ -37,7 +37,7 @@ public class BusStopManager : MonoBehaviour
     {
         foreach (BusStop busStop in _busStops)
         {
-            if (!busStop.GetIsOccupied())
+            if (!busStop.IsOccupied)
             {
                 return busStop;
             }
@@ -48,7 +48,7 @@ public class BusStopManager : MonoBehaviour
 
     public async void CheckLastAvailableBusStop(Human human)
     {
-        bool isLastBusStop = _busStops.Count(b => b.GetIsOccupied()) == 4;
+        bool isLastBusStop = _busStops.Count(b => b.IsOccupied) == 4;
 
         if (isLastBusStop)
         {

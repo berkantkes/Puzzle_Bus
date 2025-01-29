@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 public class HumanManager : MonoBehaviour
 {
@@ -10,100 +10,97 @@ public class HumanManager : MonoBehaviour
     private ObjectPoolManager _poolManager;
     private Pathfinding _pathfinding;
     private MatchManager _matchManager;
-    
-    public void Initialize(GridManager gridManager, ObjectPoolManager poolManager, Pathfinding pathfinding, 
-        MatchManager matchManager, LevelData levelData)
+
+    private const float SelectionRadius = 0.5f;  // İnsan seçme hassasiyeti
+    private const float TargetDistanceThreshold = 0.1f;  // Hedefe ulaşma eşiği
+    private static readonly Vector2Int InvalidGridPosition = new Vector2Int(-1, -1);
+
+    public void Initialize(GridManager gridManager, ObjectPoolManager poolManager, Pathfinding pathfinding, MatchManager matchManager, LevelData levelData)
     {
         _gridManager = gridManager;
         _poolManager = poolManager;
         _pathfinding = pathfinding;
         _matchManager = matchManager;
-        
+
         foreach (HumanData startPosition in levelData.HumanDatas)
         {
             SpawnHuman(startPosition);
         }
-        
-        CheckPathForOutline();
+
+        UpdateHumanOutlines();
     }
-    
+
     public void SpawnHuman(HumanData position)
     {
         Vector3 worldPosition = _gridManager.GetWorldPosition(position.HumanStartPosition);
-        Human human = _poolManager.GetFromPool<Human>(ObjectType.Human, worldPosition, Quaternion.identity);
+        Human human = _poolManager.GetFromPool<Human>(ObjectType.Human, worldPosition, Quaternion.Euler(0, 180, 0));
         human.Initialize(position.HumanColorType);
         human.transform.SetParent(transform);
-        human.transform.rotation = Quaternion.Euler(0, 180, 0);
-        //Human human = humanObj.GetComponent<Human>();
 
         _humans.Add(human);
         _gridManager.SetCellOccupied(position.HumanStartPosition, true);
     }
 
-    public List<Human> GetHumans()
-    {
-        return _humans;
-    }
-    
+    public List<Human> GetHumans() => _humans;
+
     public void MoveHuman(Vector3 worldPosition)
     {
         foreach (Human human in _humans)
         {
-            if (Vector3.Distance(human.transform.position, worldPosition) < 0.5f)
+            if (Vector3.Distance(human.transform.position, worldPosition) < SelectionRadius)
             {
-                Vector2Int currentPosition = _gridManager.GetGridPosition(human.transform.position);
-
-                if (currentPosition.y != _gridManager.SizeX - 1)
-                {
-                    Vector2Int targetPosition = _pathfinding.GetClosestTargetInTopRow(currentPosition);
-
-                    if (targetPosition != new Vector2Int(-1, -1))
-                    {
-                        List<Vector2Int> path = _pathfinding.FindPath(currentPosition, targetPosition);
-                        
-                        if (path != null)
-                        {
-                            human.UpdateMaterial(false);
-                            human.MoveAlongPath(path, _gridManager);
-                            _gridManager.SetCellOccupied(currentPosition, false);
-                            
-                            StartCoroutine(CheckIfAtTopRow(human, targetPosition));
-                            
-                        }
-                    }
-                }
-                else
-                {
-                    human.UpdateMaterial(false);
-                    _matchManager.MoveToBusStop(human, _gridManager);
-                }
+                HandleHumanMovement(human);
             }
         }
 
-        CheckPathForOutline();
+        UpdateHumanOutlines();
     }
 
-    private void CheckPathForOutline()
+    private void HandleHumanMovement(Human human)
     {
+        Vector2Int currentPosition = _gridManager.GetGridPosition(human.transform.position);
+        int topRowIndex = _gridManager.SizeY - 1;
+
+        if (currentPosition.y != topRowIndex)
+        {
+            Vector2Int targetPosition = _pathfinding.GetClosestTargetInTopRow(currentPosition);
+
+            if (targetPosition != InvalidGridPosition)
+            {
+                List<Vector2Int> path = _pathfinding.FindPath(currentPosition, targetPosition);
+
+                if (path != null)
+                {
+                    human.UpdateMaterial(false);
+                    human.MoveAlongPath(path, _gridManager);
+                    _gridManager.SetCellOccupied(currentPosition, false);
+                    StartCoroutine(CheckIfHumanReachedTopRow(human, targetPosition));
+                }
+            }
+        }
+        else
+        {
+            human.UpdateMaterial(false);
+            _matchManager.MoveToBusStop(human, _gridManager);
+        }
+    }
+
+    private void UpdateHumanOutlines()
+    {
+        int topRowIndex = _gridManager.SizeY - 1;
+
         foreach (Human human in _humans)
         {
             Vector2Int currentPosition = _gridManager.GetGridPosition(human.transform.position);
 
-            Debug.Log(currentPosition);
-            
-            if (currentPosition.y != _gridManager.SizeY - 1)
+            if (currentPosition.y != topRowIndex)
             {
                 Vector2Int targetPosition = _pathfinding.GetClosestTargetInTopRow(currentPosition);
 
-                if (targetPosition != new Vector2Int(-1, -1))
+                if (targetPosition != InvalidGridPosition)
                 {
                     List<Vector2Int> path = _pathfinding.FindPath(currentPosition, targetPosition);
-                        
                     human.UpdateMaterial(path != null);
-                    // if (path != null)
-                    // {
-                    //     //outline işlemi       
-                    // }
                 }
             }
             else
@@ -113,16 +110,16 @@ public class HumanManager : MonoBehaviour
         }
     }
 
-    private IEnumerator CheckIfAtTopRow(Human human, Vector2Int position)
+    private IEnumerator CheckIfHumanReachedTopRow(Human human, Vector2Int position)
     {
-        while (Vector3.Distance(human.transform.position, _gridManager.GetWorldPosition(position)) > 0.1f)
+        while (Vector3.Distance(human.transform.position, _gridManager.GetWorldPosition(position)) > TargetDistanceThreshold)
         {
             yield return null;
         }
 
         _matchManager.MoveToBusStop(human, _gridManager);
     }
-    
+
     public void ClearHumans()
     {
         foreach (Human human in _humans)

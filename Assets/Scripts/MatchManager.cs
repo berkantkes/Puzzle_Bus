@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,68 +5,78 @@ public class MatchManager : MonoBehaviour
 {
     private BusController _busController;
     private BusStopManager _busStopManager;
-    
+
     public void Initialize(BusController busController, BusStopManager busStopManager)
     {
         _busController = busController;
         _busStopManager = busStopManager;
     }
-    
+
     private void OnEnable()
     {
-        EventManager.Subscribe(GameEvents.OnNewBusCome, CheckMatchNewBus);
+        EventManager.Subscribe(GameEvents.OnNewBusCome, CheckMatchForNewBus);
     }
 
     private void OnDisable()
     {
-        EventManager.Unsubscribe(GameEvents.OnNewBusCome, CheckMatchNewBus);
+        EventManager.Unsubscribe(GameEvents.OnNewBusCome, CheckMatchForNewBus);
     }
-    
+
     public void MoveToBusStop(Human human, GridManager gridManager)
     {
         Bus bus = _busController.GetBus();
         BusStop busStop = _busStopManager.GetAvailableBusStop();
-        
+
+        if (bus == null || busStop == null)
+        {
+            Debug.LogWarning("Bus or BusStop not found! Human cannot be assigned.");
+            return;
+        }
+
         if (bus.ColorType == human.ColorType)
         {
-            human.MoveToBusPosition(bus.GetBusOpenPosition(), bus);
-            //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
-            bus.AddNewHuman(human);
+            AssignHumanToBus(human, bus);
         }
         else
         {
-            human.MoveToBusStopPosition(busStop.GetPosition());
-            _busStopManager.CheckLastAvailableBusStop(human);
-            busStop.AttachHuman(human);
-            //StartCoroutine(human.MoveToPosition(busStop.position));
+            AssignHumanToBusStop(human, busStop);
         }
-
-        //TODO FAIL LEVEL
     }
-    
-    private void CheckMatchNewBus()
+
+    private void AssignHumanToBus(Human human, Bus bus)
     {
-        Debug.Log("CheckMatchNewBus");
+        human.MoveToBusPosition(bus.BusOpenPosition, bus);
+        bus.AddPassenger(human);
+    }
+
+    private void AssignHumanToBusStop(Human human, BusStop busStop)
+    {
+        human.MoveToBusStopPosition(busStop.Position);
+        _busStopManager.CheckLastAvailableBusStop(human);
+        busStop.AttachHuman(human);
+    }
+
+    private void CheckMatchForNewBus()
+    {
         foreach (BusStop busStop in _busStopManager.GetBusStops())
         {
-            Debug.Log("CheckMatchNewBus 1");
-            if (busStop != null)
+            if (busStop != null && busStop.AttachedHuman != null)
             {
                 Bus bus = _busController.GetBus();
-                Human human = busStop.GetAttachHuman();
-                Debug.Log("CheckMatchNewBus 2");
-                Debug.Log("CheckMatchNewBus 2 human.ColorType" + human.ColorType);
-                Debug.Log("CheckMatchNewBus 2 bus.ColorType" + bus.ColorType);
+                Human human = busStop.AttachedHuman;
+
+                if (bus == null)
+                {
+                    Debug.LogWarning("No bus available for matching.");
+                    return;
+                }
+
                 if (bus.ColorType == human.ColorType)
                 {
-                    Debug.Log("CheckMatchNewBus 3");
-                    human.MoveToBusPosition(bus.GetBusOpenPosition(), bus);
-                    //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
-                    bus.AddNewHuman(human);
-                    busStop.SetIsOccupied(false);
+                    AssignHumanToBus(human, bus);
+                    busStop.AttachHuman(null);
                 }
             }
         }
     }
-    
 }

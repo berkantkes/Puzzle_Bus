@@ -1,89 +1,102 @@
-using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private BusStopManager _busStopManager;
-    [SerializeField] private BusController _busController; 
+    [SerializeField] private BusController _busController;
     [SerializeField] private HumanManager _humanManager;
-    [SerializeField] private GridManager _gridManager; 
+    [SerializeField] private GridManager _gridManager;
     [SerializeField] private InputManager _inputManager;
     [SerializeField] private TimerController _timerController;
-    
-    private const string PathOfData = "Datas/Levels";
 
-    private List<LevelData> _datas = new List<LevelData>();
+    private const string LevelDataPath = "Datas/Levels";
+
+    private List<LevelData> _levelDatas = new List<LevelData>();
     private GameManager _gameManager;
     private ObjectPoolManager _poolManager;
     private MatchManager _matchManager;
     private UiManager _uiManager;
-    private Pathfinding pathfinding; 
-    private List<Human> humans = new List<Human>();
-    private List<SingleGridController> gridCells = new List<SingleGridController>();
+    private Pathfinding _pathfinding;
+
+    private List<Human> _activeHumans = new List<Human>();
+    private List<SingleGridController> _activeGridCells = new List<SingleGridController>();
 
     public void Initialize(GameManager gameManager, ObjectPoolManager poolManager, MatchManager matchManager, UiManager uiManager)
     {
-        _datas = GetDatas();
+        _levelDatas = LoadAllLevelData();
         _gameManager = gameManager;
         _poolManager = poolManager;
         _matchManager = matchManager;
         _uiManager = uiManager;
     }
-    
+
     public void LoadLevel(int levelIndex)
     {
         ClearCurrentLevel();
-
         LevelData levelData = GetLevelData(levelIndex);
 
+        if (levelData == null)
+        {
+            Debug.LogError($"Level {levelIndex} bulunamadı!");
+            return;
+        }
+
         _gridManager.Initialize(levelData, _poolManager);
-        pathfinding = new Pathfinding(_gridManager);
+        _pathfinding = new Pathfinding(_gridManager);
         _busStopManager.Initialize(_poolManager);
         _busController.Initialize(levelData, _poolManager);
-        _humanManager.Initialize(_gridManager, _poolManager, pathfinding, _matchManager, levelData);
-        _matchManager.Initialize(_busController, _busStopManager); //gamemanager init
-        _inputManager.Initialize(_gameManager, _humanManager); // gamemanager init
-        _timerController.Initialize(_gameManager, levelData.time, _uiManager); // gamemanager init
+        _humanManager.Initialize(_gridManager, _poolManager, _pathfinding, _matchManager, levelData);
+        _matchManager.Initialize(_busController, _busStopManager);
+        _inputManager.Initialize(_gameManager, _humanManager);
+        _timerController.Initialize(_gameManager, levelData.time, _uiManager);
     }
 
     private void ClearCurrentLevel()
     {
-        foreach (Human human in humans)
-        {
-            _poolManager.ReturnToPool(ObjectType.Human, human.gameObject);
-        }
-        humans.Clear();
-
-        foreach (SingleGridController cell in gridCells)
-        {
-            _poolManager.ReturnToPool(ObjectType.GridCell, cell.gameObject);
-        }
-        gridCells.Clear();
+        ClearHumans();
+        ClearGridCells();
         _gridManager.ClearGrid();
-        pathfinding = null;
+        _pathfinding = null;
         _busStopManager.ClearBusStops();
         _busController.ClearBuses();
         _humanManager.ClearHumans();
     }
-    
-    public List<LevelData> GetDatas()
+
+    private void ClearHumans()
     {
-        var levels = Resources.LoadAll<Levels>(PathOfData);
+        foreach (Human human in _activeHumans)
+        {
+            _poolManager.ReturnToPool(ObjectType.Human, human.gameObject);
+        }
+        _activeHumans.Clear();
+    }
+
+    private void ClearGridCells()
+    {
+        foreach (SingleGridController cell in _activeGridCells)
+        {
+            _poolManager.ReturnToPool(ObjectType.GridCell, cell.gameObject);
+        }
+        _activeGridCells.Clear();
+    }
+
+    private List<LevelData> LoadAllLevelData()
+    {
+        var levels = Resources.LoadAll<Levels>(LevelDataPath);
 
         if (levels == null || levels.Length == 0)
         {
-            Debug.LogError($"Resources klasöründen Datas/Levels altındaki Levels varlıkları yüklenemedi!");
+            Debug.LogError($"Resources klasöründen '{LevelDataPath}' altındaki Levels varlıkları yüklenemedi!");
             return new List<LevelData>();
         }
 
-        return new List<LevelData>(levels.Select(item => item.GetData())
-            .OrderBy(data => data.levelNumber).ToList());
+        return levels.Select(level => level.GetData()).OrderBy(data => data.levelNumber).ToList();
     }
-    public LevelData GetLevelData(int id)
+
+    public LevelData GetLevelData(int levelNumber)
     {
-        return _datas.FirstOrDefault(data => data.levelNumber == id);
+        return _levelDatas.FirstOrDefault(data => data.levelNumber == levelNumber);
     }
 }
