@@ -517,7 +517,6 @@ MonoBehaviour:
   _gridManager: {fileID: 1556612229}
   _inputManager: {fileID: 1056338180}
   _timerController: {fileID: 440084147}
-  levelsData: {fileID: 11400000, guid: 76d81259b00391947b265464112edd8d, type: 2}
 --- !u!1 &440084145
 GameObject:
   m_ObjectHideFlags: 0

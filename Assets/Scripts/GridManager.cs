@@ -42,6 +42,7 @@ public class GridManager : MonoBehaviour
 
     public bool IsCellOccupied(Vector2Int position)
     {
+        Debug.Log(position.x + "," + position.y);
         return gridCells[position.x, position.y].IsItOcuppied;
     }
 

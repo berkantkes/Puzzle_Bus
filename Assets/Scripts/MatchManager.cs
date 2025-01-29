@@ -32,7 +32,7 @@ public class MatchManager : MonoBehaviour
         {
             human.MoveToPosition(bus.GetBusOpenPosition());
             //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
-            bus.AddNewHuman();
+            bus.AddNewHuman(human);
         }
         else
         {
@@ -63,7 +63,7 @@ public class MatchManager : MonoBehaviour
                     Debug.Log("CheckMatchNewBus 3");
                     human.MoveToPosition(bus.GetBusOpenPosition());
                     //StartCoroutine(human.MoveToPosition(bus.GetBusOpenPosition()));
-                    bus.AddNewHuman();
+                    bus.AddNewHuman(human);
                     busStop.SetIsOccupied(false);
                 }
             }

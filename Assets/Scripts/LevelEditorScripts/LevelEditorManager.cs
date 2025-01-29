@@ -34,6 +34,7 @@ public class LevelEditorManager : MonoBehaviour
     public int levelNumber = 1;
     private int _selectIndex = 0;
     private List<HumanData> _humanDatas = new List<HumanData>();
+    private List<ColorType> _buses = new List<ColorType>();
 
     private void Awake()
     {
@@ -179,6 +180,7 @@ public class LevelEditorManager : MonoBehaviour
         _gridHeight = data.gridSizeY;
         _time = data.time;
         _humanDatas = data.HumanDatas;
+        _buses = data.buses;
         // busesEditor = new List<BusArea>(data.buses);
         // cellsEditor = new List<CellArea>(data.cells);
         CreateGrid();
@@ -239,7 +241,6 @@ public class LevelEditorManager : MonoBehaviour
             gridSizeY = _gridHeight,
             time = _time,
             HumanDatas = _humanDatas,
-            buses = new List<ColorType>()
         };
         
         CreateAndSaveLevelAsset(newLevelData);
@@ -258,6 +259,7 @@ public class LevelEditorManager : MonoBehaviour
     
     public void SaveLevel()
     {
+        Debug.Log(_levelData.buses.Count);
         // Mevcut veriyi oluştur
         var updatedLevelData = new LevelData
         {
@@ -266,9 +268,9 @@ public class LevelEditorManager : MonoBehaviour
             gridSizeY = _gridHeight,
             time = _time,
             HumanDatas = new List<HumanData>(_humanDatas),
-            buses = new List<ColorType>()
+            buses = new List<ColorType>(_buses)
         };
-        Debug.Log(updatedLevelData.HumanDatas.Count);
+        Debug.Log(updatedLevelData.buses.Count);
 
         // Mevcut varlığı güncelle
         UpdateExistingLevel(updatedLevelData);

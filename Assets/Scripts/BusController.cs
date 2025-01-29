@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -20,7 +22,7 @@ public class BusController : MonoBehaviour
         _objectPoolManager = poolManager;
         for (int i = 0; i < levelData.buses.Count; i++)
         {
-            Bus bus = _objectPoolManager.GetFromPool<Bus>(ObjectType.Bus, new Vector3(-i * 4, 0, + 3),
+            Bus bus = _objectPoolManager.GetFromPool<Bus>(ObjectType.Bus, new Vector3(-i * 7.4f, 0, + 3),
                 Quaternion.identity);
             bus.Initialize(this, levelData.buses[i]);
             _busList.Add(bus); 
@@ -32,7 +34,7 @@ public class BusController : MonoBehaviour
         return _busList.First();
     }
     
-    public void MoveBusesAndRemoveFirst()
+    public async Task MoveBusesAndRemoveFirst(Human human)
     {
         if (_busList == null || _busList.Count == 0)
         {
@@ -40,24 +42,24 @@ public class BusController : MonoBehaviour
             return;
         }
 
+        await UniTask.WaitUntil(() => human.IsMoving == 0);
         Sequence busSequence = DOTween.Sequence();
 
         Bus firstBus = _busList[0];
-        busSequence.Join(firstBus.transform.DOMoveX(firstBus.transform.position.x + 10, .2f)
+        busSequence.Join(firstBus.transform.DOMoveX(firstBus.transform.position.x + 20, .2f)
             .SetEase(Ease.Linear));
 
         _busList.RemoveAt(0);
         for (int i = 0; i < _busList.Count; i++)
         {
             Bus bus = _busList[i];
-            busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 4, .2f)
+            busSequence.Join(bus.transform.DOMoveX(bus.transform.position.x + 7.4f, .2f)
                 .OnComplete(()=> EventManager.Execute(GameEvents.OnNewBusCome))
                 .SetEase(Ease.Linear));
         }
 
         busSequence.OnComplete(() =>
         {
-
             if (_busList.Count == 0)
             {
                 EventManager.Execute(GameEvents.OnLevelSuccessful);

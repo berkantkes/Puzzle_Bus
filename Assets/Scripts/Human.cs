@@ -33,48 +33,53 @@ public class Human : MonoBehaviour
         _colorType = colorType;           
     }
     
-    public void MoveAlongPath(List<Vector2Int> path, GridManager gridManager, float durationPerStep = 0.5f)
+    public void MoveAlongPath(List<Vector2Int> path, GridManager gridManager, float speed = 5f)
     {
         _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
         _isMoving++;
         _hasItMoved = true;
 
         Sequence moveSequence = DOTween.Sequence();
+    
         foreach (Vector2Int gridPos in path)
         {
             Vector3 targetWorldPos = gridManager.GetWorldPosition(gridPos);
+            float distance = Vector3.Distance(transform.position, targetWorldPos);
+            float duration = distance / speed; // Hızı sabit tutarak sürenin mesafeye göre hesaplanması
 
             moveSequence.Append(
-                transform.DOMove(targetWorldPos, durationPerStep)
+                transform.DOMove(targetWorldPos, .15f)
                     .SetEase(Ease.Linear)
                     .OnUpdate(() => RotateTowards(targetWorldPos))
             );
         }
 
         moveSequence.OnComplete(() =>
-            {
-                _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
-                _isMoving--;
-            }
-            );
+        {
+            _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
+            _isMoving--;
+        });
     }
 
-    public void MoveToPosition(Vector3 targetPosition, float duration = 1f)
+    public void MoveToPosition(Vector3 targetPosition, float speed = 7f)
     {
         _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") + 1);
         _isMoving++;
         _hasItMoved = true;
 
+        float distance = Vector3.Distance(transform.position, targetPosition);
+        float duration = distance / speed; // Süre = Mesafe / Hız
+
         transform.DOMove(targetPosition, duration)
             .SetEase(Ease.Linear)
-            .OnUpdate(() => RotateTowards(targetPosition)).OnComplete(() =>
-                {
-                    _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
-                    _isMoving--;
-                }
-            );
-        
+            .OnUpdate(() => RotateTowards(targetPosition))
+            .OnComplete(() =>
+            {
+                _animator.SetInteger("RunInt", _animator.GetInteger("RunInt") - 1);
+                _isMoving--;
+            });
     }
+
 
     private void RotateTowards(Vector3 targetPosition)
     {

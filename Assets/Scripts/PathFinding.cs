@@ -102,7 +102,7 @@ public class Pathfinding
         Vector2Int closestTarget = new Vector2Int(-1, -1);
         int shortestPathCost = int.MaxValue;
 
-        for (int x = 0; x < _gridManager.SizeY; x++)
+        for (int x = 0; x < _gridManager.SizeX; x++)
         {
             Vector2Int target = new Vector2Int(x, topRow);
             

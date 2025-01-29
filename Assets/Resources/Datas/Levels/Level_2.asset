@@ -23,5 +23,5 @@ MonoBehaviour:
       HumanColorType: 4
     - HumanStartPosition: {x: 0, y: 5}
       HumanColorType: 3
-    buses: 
+    buses: 0400000002000000
     time: 30

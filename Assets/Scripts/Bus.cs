@@ -31,12 +31,12 @@ public class Bus : MonoBehaviour
         return _busOpenPosition.position;
     }
 
-    public void AddNewHuman()
+    public void AddNewHuman(Human human)
     {
         _humanCount++;
         if (_humanCount == 3)
         {
-            _busController.MoveBusesAndRemoveFirst();
+            _busController.MoveBusesAndRemoveFirst(human);
         }
     }
 }

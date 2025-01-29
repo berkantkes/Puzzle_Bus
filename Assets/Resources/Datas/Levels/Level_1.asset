@@ -15,13 +15,21 @@ MonoBehaviour:
   Data:
     levelNumber: 1
     gridSizeX: 5
-    gridSizeY: 3
+    gridSizeY: 5
     HumanDatas:
-    - HumanStartPosition: {x: 2, y: 1}
+    - HumanStartPosition: {x: 1, y: 2}
       HumanColorType: 4
-    - HumanStartPosition: {x: 0, y: 0}
+    - HumanStartPosition: {x: 2, y: 4}
       HumanColorType: 4
+    - HumanStartPosition: {x: 0, y: 1}
+      HumanColorType: 4
+    - HumanStartPosition: {x: 1, y: 0}
+      HumanColorType: 4
+    - HumanStartPosition: {x: 0, y: 4}
+      HumanColorType: 2
     - HumanStartPosition: {x: 4, y: 0}
-      HumanColorType: 4
-    buses: 
-    time: 3
+      HumanColorType: 2
+    - HumanStartPosition: {x: 2, y: 0}
+      HumanColorType: 2
+    buses: 0400000002000000
+    time: 60

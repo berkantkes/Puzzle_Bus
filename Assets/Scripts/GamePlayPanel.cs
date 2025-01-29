@@ -22,7 +22,7 @@ public class GamePlayPanel : MonoBehaviour
 
     public void SetLevelText()
     {
-        _levelText.SetText("Level " + _gameManager.CurrentLevelIndex + 1);
+        _levelText.SetText("Level " + _gameManager.CurrentLevelIndex);
     }
     
 }

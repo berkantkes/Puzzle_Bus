@@ -106,6 +106,10 @@ public class HumanManager : MonoBehaviour
                     // }
                 }
             }
+            else
+            {
+                human.UpdateMaterial(true);
+            }
         }
     }
 
